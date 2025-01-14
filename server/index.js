@@ -8,8 +8,9 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 
-const userRouter = require("./routes/userRoutes");
 const authRouter = require("./routes/authRoutes");
+const userRouter = require("./routes/userRoutes");
+const productRouter = require("./routes/productRoutes");
 
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appArror");
@@ -49,6 +50,7 @@ app.use(xss());
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`This route ${req.originalUrl} doesn't exist.`, 404));
