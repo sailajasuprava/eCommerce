@@ -43,7 +43,7 @@ const limiter = rateLimit({
 app.use(cors(corsOptions));
 app.use(helmet());
 app.use("/api", limiter);
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(xss());

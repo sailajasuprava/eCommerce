@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import axios from "../lib/axios";
 
 const categories = [
   "jeans",
@@ -12,22 +14,34 @@ const categories = [
   "bags",
 ];
 
+const initialState = {
+  prodname: "",
+  description: "",
+  price: "",
+  category: "",
+  image: "",
+};
+
 function CreateProductForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    prodname: "",
-    description: "",
-    price: "",
-    category: "",
-    image: "",
-  });
+  const [newProduct, setNewProduct] = useState(initialState);
 
   function handleFormData(e) {
     setNewProduct({ ...newProduct, [e.target.name]: e.target.value });
   }
-  function handleSubmit(e) {
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(newProduct);
+    setIsLoading(true);
+    try {
+      const res = await axios.post("/products", newProduct);
+      toast.success(res.data.message);
+      setNewProduct(initialState);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleImageChange(e) {
@@ -149,6 +163,7 @@ function CreateProductForm() {
             className="sr-only"
             accept="image/*"
             onChange={handleImageChange}
+            required
           />
           <label
             htmlFor="image"
