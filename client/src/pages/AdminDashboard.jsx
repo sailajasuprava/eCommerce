@@ -1,9 +1,12 @@
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Analytics from "../components/Analytics";
 import CreateProductForm from "../components/CreateProductForm";
 import ProductsList from "../components/ProductsList";
+import toast from "react-hot-toast";
+import axios from "../lib/axios";
+import { useProduct } from "../contexts/ProductContext";
 
 const tabs = [
   { id: "create", label: "Create Product", icon: PlusCircle },
@@ -13,6 +16,18 @@ const tabs = [
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("create");
+  const { setProducts } = useProduct();
+  useEffect(() => {
+    async function getAllProducts() {
+      try {
+        const res = await axios.get("/products");
+        setProducts(res.data.data);
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    }
+    getAllProducts();
+  }, []);
 
   return (
     <div className="min-h-screen relative overflow-hidden">

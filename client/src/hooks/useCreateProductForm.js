@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "../lib/axios";
+import { useProduct } from "../contexts/ProductContext";
 
 const initialState = {
   prodname: "",
@@ -13,6 +14,7 @@ const initialState = {
 function useCreateProductForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [newProduct, setNewProduct] = useState(initialState);
+  const { setProducts } = useProduct();
 
   function handleFormData(e) {
     setNewProduct({ ...newProduct, [e.target.name]: e.target.value });
@@ -24,6 +26,7 @@ function useCreateProductForm() {
     try {
       const res = await axios.post("/products", newProduct);
       toast.success(res.data.message);
+      setProducts((prev) => [...prev, res.data.data]);
       setNewProduct(initialState);
     } catch (error) {
       toast.error(error.response.data.message);
