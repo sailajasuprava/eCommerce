@@ -8,18 +8,41 @@ function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    async function fetchCartItems() {
-      try {
-        const res = await axios.get("/cart");
-        setCart(res.data.data);
-      } catch (error) {
-        toast.error(error.response.data.message);
-      }
-    }
     fetchCartItems();
   }, []);
+
+  async function fetchCartItems() {
+    try {
+      const res = await axios.get("/cart");
+      setCart(res.data.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function updateQuantity(productId, quantity) {
+    try {
+      const res = await axios.patch("/cart", { productId, quantity });
+      setCart(res.data.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function removeFromCart(productId) {
+    console.log(productId);
+
+    try {
+      const res = await axios.delete("/cart", { data: { productId } });
+      setCart(res.data.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
   return (
-    <CartContext.Provider value={{ cart, setCart }}>
+    <CartContext.Provider
+      value={{ cart, setCart, fetchCartItems, updateQuantity, removeFromCart }}
+    >
       {children}
     </CartContext.Provider>
   );
